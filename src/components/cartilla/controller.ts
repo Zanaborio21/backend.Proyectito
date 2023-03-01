@@ -20,7 +20,7 @@ export const crearCartilla = async function createCartilla(req: Request, res: Re
     }
   }
 
-export const borrarCartilla =  async function deleteCartilla(req: Request, res: Response): Promise<void> {
+export const borrarCartilla = async function deleteCartilla(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
       await prisma.cartilla.delete({
@@ -53,6 +53,7 @@ export const getCartilla = async function getCartillaById(req: Request, res: Res
       res.status(500).json({ error: "Error al buscar la cartilla" });
     }
   }
+
 export const updateCartilla = async function updateCartilla(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
@@ -71,5 +72,15 @@ export const updateCartilla = async function updateCartilla(req: Request, res: R
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Error al actualizar la cartilla" });
+    }
+  }
+
+export const getAllCartilla = async function getAllCartilla(req: Request, res: Response): Promise<void> {
+    try {
+      const cartillas = await prisma.cartilla.findMany();
+      res.json(cartillas);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Error al obtener las cartillas" });
     }
   }

@@ -30,11 +30,7 @@ export const login = async function login(req: Request, res: Response): Promise<
   res.status(200).json({ token });
 };
 
-export const verifyToken = async function verifyToken(
-  req: Request,
-  res: Response,
-  next: () => void
-): Promise<void> {
+export const verifyToken = async function verifyToken(req: Request, res: Response, next: () => void): Promise<void> {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
@@ -51,5 +47,27 @@ export const verifyToken = async function verifyToken(
   } catch (err) {
     res.status(401).json({ message: "Token inválido" });
     return;
+  }
+};
+
+export const crearUsuario = async function crearUsuario(req: Request, res: Response): Promise<void> {
+  const { nombre, password } = req.body;
+
+  if (!nombre || !password) {
+    res.status(400).json({ message: "Falta el nombre o la contraseña" });
+    return;
+  }
+
+  const hashedPassword = await hash(password, 10);
+
+  try {
+    const usuario = await prisma.user.create({
+      data: { nombre, password: hashedPassword },
+    });
+
+    res.status(201).json({ message: "Usuario creado exitosamente", usuario });
+  } catch (err) {
+    res.status(500).json({ message: "No se pudo crear el usuario" });
+    console.error(err);
   }
 };
